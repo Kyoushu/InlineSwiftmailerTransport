@@ -10,17 +10,10 @@ class InlineCssMessageFilter extends AbstractMessageFilter
 
     /**
      * @param \Swift_Mime_Message $message
-     * @return bool
+     * @throws \TijsVerkoyen\CssToInlineStyles\Exception
      */
-    public function supportsMessage(\Swift_Mime_Message $message)
-    {
-        return $message->getContentType() === 'text/plain';
-    }
-
-
     public function filterMessage(\Swift_Mime_Message $message)
     {
-        if(!$this->supportsMessage($message)) return;
         if($this->isMessageFiltered($message)) return;
 
         $body = $message->getBody();

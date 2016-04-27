@@ -50,3 +50,24 @@ With the example above, the following body would be sent using $deliveryTranspor
             <p style="display: block; text-align: center;">Bar</p>
         </body>
     </html>
+    
+## Additional Filters
+
+### Embed Image Filter
+
+#### Example
+
+Images with absolute src attributes are embedded, and the related src attributes updated with "cid:########"
+
+    $webRootDir = '/path/to/my/web/root/dir';
+    
+    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
+    $transport->addMessageFilter(new EmbedImageMessageFilter($webRootDir));
+    
+    $message = new \Swift_Message('Foo', '<html><body><img src="/images/my-image.png"</body></html>', 'text/html');
+    $transport->send($message);
+    
+Body sent via delivery transport
+
+    <html><body><img src="cid:09F48ag2b674"</body></html>
+    

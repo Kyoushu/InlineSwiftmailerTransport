@@ -5,12 +5,7 @@ namespace Kyoushu\InlineSwiftmailerTransport\MessageFilter;
 interface MessageFilterInterface
 {
 
-    const HEADER_FILTER_LIST = 'X-KyoushuInlineTransport-FilterList';
-
-    /**
-     * @return MessageFilterInterface
-     */
-    public static function create();
+    const HEADER_FILTER_LIST = 'x-kit-filter-list';
 
     /**
      * @param \Swift_Mime_Message $message

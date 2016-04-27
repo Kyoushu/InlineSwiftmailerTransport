@@ -6,12 +6,12 @@ abstract class AbstractMessageFilter implements MessageFilterInterface
 {
 
     /**
-     * @return AbstractMessageFilter
+     * @param \Swift_Mime_Message $message
+     * @return bool
      */
-    public static function create()
+    public function supportsMessage(\Swift_Mime_Message $message)
     {
-        $ref = new \ReflectionClass(static::class);
-        return $ref->newInstance();
+        return $message->getContentType() === 'text/html';
     }
 
     /**
@@ -43,7 +43,8 @@ abstract class AbstractMessageFilter implements MessageFilterInterface
             return array();
         }
         $ids = $message->getHeaders()->get(self::HEADER_FILTER_LIST);
-        return explode(',', $ids);
+        $ids = explode(',', $ids);
+        return $ids;
     }
 
     /**
@@ -55,7 +56,7 @@ abstract class AbstractMessageFilter implements MessageFilterInterface
     {
         $ids = $this->getMessageFilterIds($message);
         $key = array_search($ids, $ids);
-        if($key === false) return $this;
+        if($key !== false) return $this;
         $ids[] = $id;
         $this->setMessageFilterIds($message, $ids);
         return $this;

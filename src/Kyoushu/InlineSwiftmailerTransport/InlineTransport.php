@@ -93,6 +93,7 @@ class InlineTransport implements \Swift_Transport
     public function send(\Swift_Mime_Message $message, &$failedRecipients = null)
     {
         foreach($this->getMessageFilters() as $filter){
+            if(!$filter->supportsMessage($message)) continue;
             $filter->filterMessage($message);
         }
 
