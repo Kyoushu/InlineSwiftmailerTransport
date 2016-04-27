@@ -57,7 +57,7 @@ With the example above, the following body would be sent using $deliveryTranspor
 
 #### Example
 
-Images with absolute src attributes are embedded, and the related src attributes updated with "cid:########"
+Images with absolute src attributes are embedded, and the related src attributes updated with "cid:########".
 
     $webRootDir = '/path/to/my/web/root/dir';
     
@@ -70,4 +70,18 @@ Images with absolute src attributes are embedded, and the related src attributes
 Body sent via delivery transport
 
     <html><body><img src="cid:09F48ag2b674"</body></html>
+    
+### Inline CSS Filter (Non-embedded CSS)
+
+If you want to embed CSS added to a HTML with \<link\> elements, rather than CSS which has been embedded with \<style\> elements, add an InlineCssMessageFilter.
+
+#### Example
+
+    $webRootDir = '/path/to/my/web/root/dir';
+    
+    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
+    $transport->addMessageFilter(new InlineCssMessageFilter($webRootDir));
+    
+    $message = new \Swift_Message('Foo', '<html><head><link rel="stylesheet" href="/css/email.css"></head><body><p>Foo</p></body></html>', 'text/html');
+    $transport->send($message);
     
