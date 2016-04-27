@@ -71,6 +71,7 @@ class InlineTransport implements \Swift_Transport
     public function registerPlugin(\Swift_Events_EventListener $plugin)
     {
         $this->dispatcher->bindEventListener($plugin);
+        $this->deliveryTransport->registerPlugin($plugin);
     }
 
     /**

@@ -5,7 +5,7 @@ A SwiftMailer transport which inlines CSS before forwarding the message to anoth
 ## Usage Example
 
     $deliveryTransport = new \Swift_SmtpTransport('localhost', 25);
-    $transport = new \Kyoushu\InlineSwiftmailerTransport\InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
+    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
     
     $message = new Swift_Message(
         'Foo',
