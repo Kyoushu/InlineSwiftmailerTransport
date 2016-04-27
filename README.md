@@ -1,4 +1,4 @@
-# Kyoushu/InlineSwiftmailerTransport
+# Kyoushu/InlineSwiftmailerTransport [![Build Status](https://travis-ci.org/Kyoushu/InlineSwiftmailerTransport.svg?branch=master)](https://travis-ci.org/Kyoushu/InlineSwiftmailerTransport)
 
 A SwiftMailer transport which inlines CSS before forwarding the message to another transport for delivery
 
