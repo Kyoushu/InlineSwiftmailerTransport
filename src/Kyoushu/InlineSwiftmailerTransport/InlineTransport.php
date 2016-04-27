@@ -2,13 +2,13 @@
 
 namespace Kyoushu\InlineSwiftmailerTransport;
 
-use Kyoushu\InlineSwiftmailerTransport\CssInliner\CssInlinerInterface;
-use Kyoushu\InlineSwiftmailerTransport\CssInliner\TijsverkoyenCssInliner;
+use Kyoushu\InlineSwiftmailerTransport\MessageFilter\InlineCssMessageFilter;
+use Kyoushu\InlineSwiftmailerTransport\MessageFilter\MessageFilterInterface;
 
 class InlineTransport implements \Swift_Transport
 {
 
-    const HEADER_CSS_INLINED = 'X-KyoushuInlineTransport-CssInlined';
+    const HEADER_BODY_INLINED = 'X-KyoushuInlineTransport-BodyInlined';
 
     /**
      * @var \Swift_Transport
@@ -21,6 +21,11 @@ class InlineTransport implements \Swift_Transport
     protected $dispatcher;
 
     /**
+     * @var MessageFilterInterface[]
+     */
+    protected $messageFilters;
+
+    /**
      * @param \Swift_Transport $deliveryTransport
      * @param \Swift_Events_EventDispatcher $dispatcher
      */
@@ -28,6 +33,9 @@ class InlineTransport implements \Swift_Transport
     {
         $this->deliveryTransport = $deliveryTransport;
         $this->dispatcher = $dispatcher;
+
+        $this->clearMessageFilters();
+        $this->addMessageFilter(new InlineCssMessageFilter());
     }
 
     /**
@@ -36,6 +44,29 @@ class InlineTransport implements \Swift_Transport
     public function getDeliveryTransport()
     {
         return $this->deliveryTransport;
+    }
+
+    public function clearMessageFilters()
+    {
+        $this->messageFilters = array();
+    }
+
+    /**
+     * @return MessageFilterInterface[]
+     */
+    public function getMessageFilters()
+    {
+        return $this->messageFilters;
+    }
+
+    /**
+     * @param MessageFilterInterface $filter
+     * @return $this
+     */
+    public function addMessageFilter(MessageFilterInterface $filter)
+    {
+        $this->messageFilters[] = $filter;
+        return $this;
     }
 
     /**
@@ -61,7 +92,10 @@ class InlineTransport implements \Swift_Transport
      */
     public function send(\Swift_Mime_Message $message, &$failedRecipients = null)
     {
-        $this->inlineMessage($message);
+        foreach($this->getMessageFilters() as $filter){
+            $filter->filterMessage($message);
+        }
+
         return $this->deliveryTransport->send($message, $failedRecipients);
     }
 
@@ -72,38 +106,6 @@ class InlineTransport implements \Swift_Transport
     {
         $this->dispatcher->bindEventListener($plugin);
         $this->deliveryTransport->registerPlugin($plugin);
-    }
-
-    /**
-     * @param \Swift_Mime_Message $message
-     */
-    public function inlineMessage(\Swift_Mime_Message $message)
-    {
-        $this->inlineMessageCss($message);
-    }
-
-    /**
-     * @return CssInlinerInterface
-     */
-    protected function createCssInliner()
-    {
-        return new TijsverkoyenCssInliner();
-    }
-
-    /**
-     * @param \Swift_Mime_Message $message#
-     */
-    public function inlineMessageCss(\Swift_Mime_Message $message)
-    {
-        if($message->getContentType() !== 'text/html') return;
-
-        // Don't inline CSS more than once
-        if($message->getHeaders()->has(self::HEADER_CSS_INLINED)) return;
-        $message->getHeaders()->addTextHeader(self::HEADER_CSS_INLINED);
-
-        $body = $message->getBody();
-        $body = $this->createCssInliner()->inlineCss($body);
-        $message->setBody($body);
     }
 
 }
