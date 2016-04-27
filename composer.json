@@ -9,6 +9,7 @@
         }
     ],
     "require": {
+        "php": ">=5.5",
         "swiftmailer/swiftmailer": "^5.4",
         "tijsverkoyen/css-to-inline-styles": "^1.5",
         "symfony/dom-crawler": "^3.0"
