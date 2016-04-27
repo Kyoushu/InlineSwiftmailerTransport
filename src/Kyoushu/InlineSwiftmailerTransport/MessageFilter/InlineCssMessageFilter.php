@@ -43,20 +43,7 @@ class InlineCssMessageFilter extends AbstractMessageFilter
             $css .= $node->nodeValue;
         }
 
-        $css = $this->tidyCss($css);
-
         return $css;
-    }
-
-    /**
-     * @param string $css
-     * @return string
-     */
-    protected function tidyCss($css)
-    {
-        $tidy = new \csstidy();
-        $tidy->parse($css);
-        return $tidy->print->plain();
     }
 
 }
