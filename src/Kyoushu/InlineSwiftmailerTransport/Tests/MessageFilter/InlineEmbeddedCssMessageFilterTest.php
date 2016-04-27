@@ -2,9 +2,9 @@
 
 namespace Kyoushu\InlineSwiftmailerTransport\Tests\MessageFilter;
 
-use Kyoushu\InlineSwiftmailerTransport\MessageFilter\InlineCssMessageFilter;
+use Kyoushu\InlineSwiftmailerTransport\MessageFilter\InlineEmbeddedCssMessageFilter;
 
-class InlineCssMessageFilterTest extends MessageFilterTestCase
+class InlineEmbeddedCssMessageFilterTest extends MessageFilterTestCase
 {
 
     public function testFilterMessage()
@@ -12,7 +12,7 @@ class InlineCssMessageFilterTest extends MessageFilterTestCase
         $message = new \Swift_Message('Foo', $this->loadHtml('original'), 'text/html');
 
         $transport = $this->createInlineTransport();
-        $transport->addMessageFilter(new InlineCssMessageFilter());
+        $transport->addMessageFilter(new InlineEmbeddedCssMessageFilter());
         $transport->send($message);
 
         $this->assertBodyElementAttributesEquals($message, 'div', 'style', 'padding: 10px;');

@@ -2,7 +2,7 @@
 
 namespace Kyoushu\InlineSwiftmailerTransport;
 
-use Kyoushu\InlineSwiftmailerTransport\MessageFilter\InlineCssMessageFilter;
+use Kyoushu\InlineSwiftmailerTransport\MessageFilter\InlineEmbeddedCssMessageFilter;
 use Kyoushu\InlineSwiftmailerTransport\MessageFilter\MessageFilterInterface;
 
 class InlineTransport implements \Swift_Transport
@@ -35,7 +35,7 @@ class InlineTransport implements \Swift_Transport
         $this->dispatcher = $dispatcher;
 
         $this->clearMessageFilters();
-        $this->addMessageFilter(new InlineCssMessageFilter());
+        $this->addMessageFilter(new InlineEmbeddedCssMessageFilter());
     }
 
     /**

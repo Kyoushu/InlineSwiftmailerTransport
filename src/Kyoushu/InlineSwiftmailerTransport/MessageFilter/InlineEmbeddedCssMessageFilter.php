@@ -5,7 +5,7 @@ namespace Kyoushu\InlineSwiftmailerTransport\MessageFilter;
 use Symfony\Component\DomCrawler\Crawler;
 use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
-class InlineCssMessageFilter extends AbstractMessageFilter
+class InlineEmbeddedCssMessageFilter extends AbstractMessageFilter
 {
 
     /**
