@@ -2,65 +2,47 @@
 
 A SwiftMailer transport which inlines CSS before forwarding the message to another transport for delivery
 
-## Usage Example
+## Filters
 
-    $deliveryTransport = new \Swift_SmtpTransport('localhost', 25);
-    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
-    
-    $message = new Swift_Message(
-        'Foo',
-        '<html>
-            <head>
-                <style>
-                    body{
-                        font-family: sans-serif;
-                    }
-                    
-                    p{
-                        display: block;
-                        text-align: center;
-                    }
-                </style>
-            </head>
-            <body>
-                <p>Bar</p>
-            </body>
-        </html>',
-        'text/html'
-    );
-    
-    $transport->send($message);
-    
-With the example above, the following body would be sent using $deliveryTransport
+### Inline Embedded CSS
 
-    <html>
-        <head>
-            <style>
-                body{
-                    font-family: sans-serif;
-                }
-                
-                p{
-                    display: block;
-                    text-align: center;
-                }
-            </style>
-        </head>
-        <body style="font-family: sans-serif;">
-            <p style="display: block; text-align: center;">Bar</p>
-        </body>
-    </html>
-    
-## Additional Filters
-
-### Embed Image Filter
+This filter is loaded automatically when an instance of InlineTransport is created
 
 #### Example
 
-Images with absolute src attributes are embedded, and the related src attributes updated with "cid:########".
+    $deliveryTransport = new \Swift_SmtpTransport('localhost', 25);
+    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
+    $message = new \Swift_Message('Foo', '<html><head><style>p{ font-weight: bold; }</style></head><body><p>Foo</p></body></html>', 'text/html');
+    $transport->send($message);
+    
+Body sent via delivery transport
+
+    <html><head><style>p{ font-weight: bold; }</style></head><body><p style="font-weight: bold;">Foo</p></body></html>
+
+### Inline Included CSS
+
+If you want to inline CSS included with \<link\> elements, rather than CSS which has been embedded with \<style\> elements, use the InlineCssMessageFilter class.
+
+#### Example
 
     $webRootDir = '/path/to/my/web/root/dir';
     
+    $deliveryTransport = new \Swift_SmtpTransport('localhost', 25);
+    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
+    $transport->addMessageFilter(new InlineCssMessageFilter($webRootDir));
+    
+    $message = new \Swift_Message('Foo', '<html><head><link rel="stylesheet" href="/css/email.css"></head><body><p>Foo</p></body></html>', 'text/html');
+    $transport->send($message);
+
+### Embed Images
+
+#### Example
+
+\<img\> elements with absolute src attributes are embedded, and updated with "cid:########" values.
+
+    $webRootDir = '/path/to/my/web/root/dir';
+    
+    $deliveryTransport = new \Swift_SmtpTransport('localhost', 25);
     $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
     $transport->addMessageFilter(new EmbedImageMessageFilter($webRootDir));
     
@@ -70,18 +52,4 @@ Images with absolute src attributes are embedded, and the related src attributes
 Body sent via delivery transport
 
     <html><body><img src="cid:09F48ag2b674"</body></html>
-    
-### Inline CSS Filter (Non-embedded CSS)
-
-If you want to embed CSS added to a HTML with \<link\> elements, rather than CSS which has been embedded with \<style\> elements, add an InlineCssMessageFilter.
-
-#### Example
-
-    $webRootDir = '/path/to/my/web/root/dir';
-    
-    $transport = new InlineTransport($deliveryTransport, new \Swift_Events_SimpleEventDispatcher());
-    $transport->addMessageFilter(new InlineCssMessageFilter($webRootDir));
-    
-    $message = new \Swift_Message('Foo', '<html><head><link rel="stylesheet" href="/css/email.css"></head><body><p>Foo</p></body></html>', 'text/html');
-    $transport->send($message);
     
